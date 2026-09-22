@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
+  type ColumnFiltersState,
   type ColumnOrderState,
   type ColumnPinningState,
   type ColumnSizingState,
@@ -37,6 +38,8 @@ export function DataTable({
 }) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [showFilterRow, setShowFilterRow] = useState(false);
   const [columnSizing, setColumnSizing] = useState<ColumnSizingState>({});
   const [columnOrder, setColumnOrder] = useState<ColumnOrderState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -79,15 +82,16 @@ export function DataTable({
   // Narrowing the filter can leave the viewer on a page that no longer exists.
   useEffect(() => {
     setPagination((p) => ({ ...p, pageIndex: 0 }));
-  }, [rows.length, globalFilter]);
+  }, [rows.length, globalFilter, columnFilters]);
 
   const table = useReactTable({
     data: rows,
     columns,
-    state: { sorting, globalFilter, columnSizing, columnOrder, columnVisibility, columnPinning, pagination },
+    state: { sorting, globalFilter, columnFilters, columnSizing, columnOrder, columnVisibility, columnPinning, pagination },
     columnResizeMode: "onChange",
     onSortingChange: setSorting,
     onGlobalFilterChange: setGlobalFilter,
+    onColumnFiltersChange: setColumnFilters,
     onColumnSizingChange: setColumnSizing,
     onColumnOrderChange: setColumnOrder,
     onColumnVisibilityChange: setColumnVisibility,
@@ -133,7 +137,23 @@ export function DataTable({
           className="w-full max-w-xs rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
         />
 
-        <div className="relative ml-auto">
+        <button
+          onClick={() => {
+            setShowFilterRow((v) => {
+              if (v) setColumnFilters([]); // clearing the row clears its filters
+              return !v;
+            });
+          }}
+          className={`ml-auto rounded-lg border px-3 py-2 text-sm transition ${
+            showFilterRow
+              ? "border-blue-300 bg-blue-50 text-blue-700"
+              : "border-slate-300 text-slate-700 hover:bg-slate-50"
+          }`}
+        >
+          Column filters{columnFilters.length > 0 ? ` (${columnFilters.length})` : ""}
+        </button>
+
+        <div className="relative">
           <button
             onClick={() => setShowColumnMenu((s) => !s)}
             className="rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-50"
@@ -251,6 +271,38 @@ export function DataTable({
                 })}
               </tr>
             ))}
+
+            {showFilterRow && (
+              <tr>
+                {table.getVisibleLeafColumns().map((column) => {
+                  const pinned = column.getIsPinned();
+                  return (
+                    <th
+                      key={column.id}
+                      style={{
+                        width: column.getSize(),
+                        ...(pinned === "left"
+                          ? { position: "sticky", left: pinnedLeftOffset(column.id), zIndex: 20 }
+                          : {}),
+                      }}
+                      className={`border-b border-slate-200 px-2 pb-2 ${
+                        pinned === "left" ? "bg-slate-50" : "bg-slate-50"
+                      }`}
+                    >
+                      {column.getCanFilter() && column.id !== "actions" ? (
+                        <input
+                          value={(column.getFilterValue() as string) ?? ""}
+                          onChange={(e) => column.setFilterValue(e.target.value || undefined)}
+                          placeholder="Filter…"
+                          aria-label={`Filter by ${column.id}`}
+                          className="w-full rounded border border-slate-300 px-1.5 py-1 text-xs font-normal outline-none focus:border-blue-400"
+                        />
+                      ) : null}
+                    </th>
+                  );
+                })}
+              </tr>
+            )}
           </thead>
 
           <tbody>

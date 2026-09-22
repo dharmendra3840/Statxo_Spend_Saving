@@ -7,6 +7,7 @@ import { AddRecordDialog } from "@/components/records/AddRecordDialog";
 import { applyFilters } from "@/lib/filter";
 import { useFilters } from "@/lib/useFilters";
 import { useRecords } from "@/lib/useRecords";
+import { downloadCsv } from "@/lib/csv";
 import type { SpendRecord } from "@/lib/types";
 
 function RecordsInner() {
@@ -57,12 +58,22 @@ function RecordsInner() {
             Budget, Actual Spend and Category are editable inline
           </p>
         </div>
-        <button
-          onClick={() => setAddOpen(true)}
-          className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700"
-        >
-          + Add record
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => downloadCsv(filtered)}
+            disabled={filtered.length === 0}
+            className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
+            title="Export the currently filtered records"
+          >
+            Export CSV
+          </button>
+          <button
+            onClick={() => setAddOpen(true)}
+            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700"
+          >
+            + Add record
+          </button>
+        </div>
       </div>
 
       <FilterBar
