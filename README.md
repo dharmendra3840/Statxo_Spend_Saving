@@ -204,7 +204,7 @@ Requires **Node.js 22 or newer**. `@supabase/supabase-js` depends on a native
 `WebSocket`, which Node 20 does not provide; `createClient()` throws there.
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/dharmendra3840/Statxo_Spend_Saving
 cd spend-analytics
 npm install
 cp .env.local.example .env.local   # then fill in the values
