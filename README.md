@@ -3,7 +3,7 @@
 A full-stack application for analysing organisational spend: budget vs actual,
 savings and overspend, across business units, categories, vendors and locations.
 
-**Live URL:** _to be added on deployment_
+**Live URL:** https://statxospendsaving.vercel.app
 
 ### Test credentials
 
@@ -102,7 +102,7 @@ route. Both layers are present.
 | 7. Sample data | ✅ | All 20 rows seeded via migration |
 | 8. Backend + database, auth and CRUD APIs | ✅ | See above; full CRUD including delete |
 | 9. Responsive frontend, loading / empty / error states | ✅ | Skeletons, empty states, toasts, error boundaries |
-| 10. Deployment | ⬜ | See [Deployment](#deployment) |
+| 10. Deployment | ✅ | Vercel + Supabase — see [Deployment](#deployment) |
 
 Additions beyond the brief: CSV export of the filtered set, delete with
 confirmation, URL-encoded filter state (shareable links), and automated test
