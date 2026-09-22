@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "migrate": "node scripts/migrate.mjs"
+    "migrate": "node scripts/migrate.mjs",
+    "verify": "tsx scripts/verify-logic.mts",
+    "e2e": "tsx scripts/e2e.mts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",
@@ -31,6 +33,7 @@
     "eslint-config-next": "16.3.5",
     "pg": "^8.23.0",
     "tailwindcss": "^4",
+    "tsx": "^4.23.15",
     "typescript": "^5"
   },
   "engines": {
